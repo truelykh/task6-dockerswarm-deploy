@@ -8,7 +8,7 @@ pipeline {
         IMAGE_TAG         = "${env.BUILD_NUMBER}"
         FULL_IMAGE        = "${NEXUS_URL}/repository/${NEXUS_DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
         SWARM_STACK       = 'task6'
-        NEXUS_CREDS       = 'nexus-docker-credentials'
+        NEXUS_CREDS       = 'nexus_credentials'
         SWARM_SSH_CREDS   = 'swarm-manager-ssh'
         SWARM_MANAGER_IP  = 'swarm-manager'
     }
