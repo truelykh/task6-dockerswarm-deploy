@@ -12,6 +12,7 @@ pipeline {
         SWARM_SSH_CREDS   = 'swarm-manager-ssh'
         SWARM_MANAGER_IP  = 'swarm-manager'
         DOCKER            = '/usr/local/bin/docker'
+        DOCKER_CFG        = '/tmp/docker-cfg'
     }
 
     stages {
@@ -25,16 +26,20 @@ pipeline {
         stage('Build & Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${NEXUS_CREDS}", usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    sh '''
-                        ''' + DOCKER + ''' build \
-                            --build-arg NEXUS_USER=$NEXUS_USER \
-                            --build-arg NEXUS_PASS=$NEXUS_PASS \
-                            -t ''' + FULL_IMAGE + ''' .
+                    sh """
+                        mkdir -p ${DOCKER_CFG}
+                        echo '{"auths":{}}' > ${DOCKER_CFG}/config.json
 
-                        echo $NEXUS_PASS | ''' + DOCKER + ''' login ''' + NEXUS_URL + ''' -u $NEXUS_USER --password-stdin
-                        ''' + DOCKER + ''' push ''' + FULL_IMAGE + '''
-                        ''' + DOCKER + ''' logout ''' + NEXUS_URL + '''
-                    '''
+                        DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} build \\
+                            --build-arg NEXUS_USER=\$NEXUS_USER \\
+                            --build-arg NEXUS_PASS=\$NEXUS_PASS \\
+                            -t ${FULL_IMAGE} .
+
+                        echo \$NEXUS_PASS | DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} login ${NEXUS_URL} -u \$NEXUS_USER --password-stdin
+                        DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} push ${FULL_IMAGE}
+                        DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} logout ${NEXUS_URL}
+                        rm -rf ${DOCKER_CFG}
+                    """
                 }
             }
         }
@@ -46,8 +51,8 @@ pipeline {
                         export IMAGE_TAG=${IMAGE_TAG}
                         envsubst < docker-compose.yml > stack.yml
 
-                        scp -i $SSH_KEY -o StrictHostKeyChecking=no stack.yml ${SSH_USER}@${SWARM_MANAGER_IP}:/tmp/task6-stack.yml
-                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no ${SSH_USER}@${SWARM_MANAGER_IP} \\
+                        scp -i \$SSH_KEY -o StrictHostKeyChecking=no stack.yml \${SSH_USER}@${SWARM_MANAGER_IP}:/tmp/task6-stack.yml
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \${SSH_USER}@${SWARM_MANAGER_IP} \\
                             "docker stack deploy -c /tmp/task6-stack.yml ${SWARM_STACK} --with-registry-auth"
                     """
                 }
