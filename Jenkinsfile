@@ -11,7 +11,7 @@ pipeline {
         NEXUS_CREDS       = 'nexus_credentials'
         SWARM_SSH_CREDS   = 'swarm-manager-ssh'
         SWARM_MANAGER_IP  = 'swarm-manager'
-        PATH              = "/usr/local/bin:/usr/bin:/bin:$PATH"
+        DOCKER            = '/usr/local/bin/docker'
     }
 
     stages {
@@ -25,16 +25,16 @@ pipeline {
         stage('Build & Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${NEXUS_CREDS}", usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    sh """
-                        docker build \\
-                            --build-arg NEXUS_USER=\${NEXUS_USER} \\
-                            --build-arg NEXUS_PASS=\${NEXUS_PASS} \\
-                            -t ${FULL_IMAGE} .
+                    sh '''
+                        ''' + DOCKER + ''' build \
+                            --build-arg NEXUS_USER=$NEXUS_USER \
+                            --build-arg NEXUS_PASS=$NEXUS_PASS \
+                            -t ''' + FULL_IMAGE + ''' .
 
-                        echo \$NEXUS_PASS | docker login ${NEXUS_URL} -u \$NEXUS_USER --password-stdin
-                        docker push ${FULL_IMAGE}
-                        docker logout ${NEXUS_URL}
-                    """
+                        echo $NEXUS_PASS | ''' + DOCKER + ''' login ''' + NEXUS_URL + ''' -u $NEXUS_USER --password-stdin
+                        ''' + DOCKER + ''' push ''' + FULL_IMAGE + '''
+                        ''' + DOCKER + ''' logout ''' + NEXUS_URL + '''
+                    '''
                 }
             }
         }
