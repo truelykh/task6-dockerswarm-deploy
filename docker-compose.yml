@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+version: '3.8'
+
+
+services:
+  app:
+    image: nexus:8081/repository/dockerswarm/task6-app:${IMAGE_TAG}
+    ports:
+      - "9095:8080"
+    environment:
+      - SWARM_SERVICE_NAME=task6_app
+      - NEXUS_MAVEN_REPO_URL=http://nexus:8081/repository/maven-swarm/
+      - NEXUS_DOCKER_REPO_URL=http://nexus:8081/repository/dockerswarm/
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - task6
+
+networks:
+  task6:
+    driver: overlay

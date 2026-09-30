@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Maven settings.xml – Task 6
+    All dependencies and plugins are resolved through Nexus.
+    Pass this to every Maven command with: mvn -s settings.xml <goal>
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0
+          https://maven.apache.org/xsd/settings-1.2.0.xsd">
+
+    <!-- ── Nexus credentials (injected by Jenkins at runtime) ──── -->
+    <servers>
+        <server>
+            <id>maven-swarm</id>
+            <username>${env.NEXUS_USER}</username>
+            <password>${env.NEXUS_PASS}</password>
+        </server>
+        <server>
+            <id>nexus-mirror</id>
+            <username>${env.NEXUS_USER}</username>
+            <password>${env.NEXUS_PASS}</password>
+        </server>
+    </servers>
+
+    <!-- ── Route ALL external repos through Nexus ──────────────── -->
+    <!--
+        Nexus should have a "maven-swarm" group repo that proxies:
+          • Maven Central
+          • Any other upstream repos (e.g. JBoss, Spring)
+        This mirror intercepts every repository lookup.
+    -->
+    <mirrors>
+        <mirror>
+            <id>nexus-mirror</id>
+            <name>Nexus – All Repos Mirror (maven-swarm)</name>
+            <!--
+                * = mirror for ALL repositories, including central.
+                Use "central,*" if you only want to intercept central.
+            -->
+            <mirrorOf>*</mirrorOf>
+            <url>http://nexus:8081/repository/maven-swarm/</url>
+        </mirror>
+    </mirrors>
+
+    <!-- ── Active profile that disables external repos ─────────── -->
+    <profiles>
+        <profile>
+            <id>nexus</id>
+
+            <!-- Force Maven to look only at Nexus for releases -->
+            <repositories>
+                <repository>
+                    <id>maven-swarm</id>
+                    <url>http://nexus:8081/repository/maven-swarm/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+
+            <!-- Force Maven to look only at Nexus for plugins -->
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>maven-swarm</id>
+                    <url>http://nexus:8081/repository/maven-swarm/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+    <!-- Activate the nexus profile globally -->
+    <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+    </activeProfiles>
+
+</settings>
