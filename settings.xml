@@ -65,19 +65,7 @@
             </repositories>
 
             <!-- Force Maven to look only at Nexus for plugins -->
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>maven-swarm</id>
-                    <url>http://nexus:8081/repository/maven-swarm/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
+
         </profile>
     </profiles>
 

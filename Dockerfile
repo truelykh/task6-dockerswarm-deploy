@@ -17,8 +17,8 @@ RUN mvn -s settings.xml clean package -DskipTests \
 FROM tomcat:9.0-jdk11-temurin
 
 LABEL maintainer="rakesh" \
-      app="task6-dockerswarm-app" \
-      version="1.0.0"
+    app="task6-dockerswarm-app" \
+    version="1.0.0"
 
 ENV SWARM_SERVICE_NAME=task6_app \
     NEXUS_MAVEN_REPO_URL=http://nexus:8081/repository/maven-swarm/ \
