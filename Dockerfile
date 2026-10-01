@@ -8,9 +8,6 @@ WORKDIR /app
 COPY settings.xml .
 COPY pom.xml .
 
-RUN mvn -s settings.xml dependency:go-offline \
-    -Drepo.username=${NEXUS_USER} \
-    -Drepo.password=${NEXUS_PASS}
 
 COPY src ./src
 RUN mvn -s settings.xml clean package -DskipTests \

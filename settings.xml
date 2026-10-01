@@ -13,13 +13,13 @@
     <servers>
         <server>
             <id>maven-swarm</id>
-            <username>${env.NEXUS_USER}</username>
-            <password>${env.NEXUS_PASS}</password>
+            <username>${repo.username}</username>
+            <password>${repo.password}</password>
         </server>
         <server>
             <id>nexus-mirror</id>
-            <username>${env.NEXUS_USER}</username>
-            <password>${env.NEXUS_PASS}</password>
+            <username>${repo.username}</username>
+            <password>${repo.password}</password>
         </server>
     </servers>
 
@@ -38,7 +38,7 @@
                 * = mirror for ALL repositories, including central.
                 Use "central,*" if you only want to intercept central.
             -->
-            <mirrorOf>*</mirrorOf>
+            <mirrorOf>external:*</mirrorOf>
             <url>http://nexus:8081/repository/maven-swarm/</url>
         </mirror>
     </mirrors>
