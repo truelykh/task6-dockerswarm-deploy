@@ -12,7 +12,7 @@ services:
       - NEXUS_MAVEN_REPO_URL=http://nexus:8081/repository/maven-swarm/
       - NEXUS_DOCKER_REPO_URL=http://nexus:8081/repository/dockerswarm/
     deploy:
-      replicas: 3
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 10s
