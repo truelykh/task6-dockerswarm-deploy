@@ -30,7 +30,14 @@
           • Any other upstream repos (e.g. JBoss, Spring)
         This mirror intercepts every repository lookup.
     -->
-
+    <mirrors>
+        <mirror>
+            <id>nexus-mirror</id>
+            <name>Nexus – All Repos Mirror (maven-swarm)</name>
+            <url>http://nexus:8081/repository/maven-swarm/</url>
+            <mirrorOf>*,!central</mirrorOf>
+        </mirror>
+    </mirrors>
 
     <!-- ── Active profile that disables external repos ─────────── -->
     <profiles>
