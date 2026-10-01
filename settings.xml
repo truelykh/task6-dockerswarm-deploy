@@ -30,18 +30,7 @@
           • Any other upstream repos (e.g. JBoss, Spring)
         This mirror intercepts every repository lookup.
     -->
-    <mirrors>
-        <mirror>
-            <id>nexus-mirror</id>
-            <name>Nexus – All Repos Mirror (maven-swarm)</name>
-            <!--
-                * = mirror for ALL repositories, including central.
-                Use "central,*" if you only want to intercept central.
-            -->
-            <mirrorOf>external:*</mirrorOf>
-            <url>http://nexus:8081/repository/maven-swarm/</url>
-        </mirror>
-    </mirrors>
+
 
     <!-- ── Active profile that disables external repos ─────────── -->
     <profiles>
@@ -62,7 +51,26 @@
                         <updatePolicy>always</updatePolicy>
                     </snapshots>
                 </repository>
+                <repository>
+                    <id>dockerswarm</id>
+                    <url>http://nexus:8081/repository/dockerswarm/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
             </repositories>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>false</enabled></snapshots>
+                </pluginRepository>
+            </pluginRepositories>
 
             <!-- Force Maven to look only at Nexus for plugins -->
 
