@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL         = 'http://localhost:8081'
-        NEXUS_REGISTRY   = 'localhost:8081'
+        NEXUS_URL         = 'http://nexus:8081'
+        NEXUS_REGISTRY   = 'nexus:8081'
         NEXUS_DOCKER_REPO = 'dockerswarm'
         IMAGE_NAME        = 'task6-app'
         IMAGE_TAG         = "${env.BUILD_NUMBER}"
@@ -38,9 +38,9 @@ pipeline {
                             --build-arg NEXUS_PASS=\$NEXUS_PASS \\
                             -t ${FULL_IMAGE} .
 
-                        echo \$NEXUS_PASS | DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} login ${NEXUS_REGISTRY} -u \$NEXUS_USER --password-stdin
+                        echo \$NEXUS_PASS | DOCKER_TLS_VERIFY=0 DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} login ${NEXUS_REGISTRY} -u \$NEXUS_USER --password-stdin
                         DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} push ${FULL_IMAGE}
-                        DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} logout ${NEXUS_REGISTRY}
+                        DOCKER_TLS_VERIFY=0 DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} logout ${NEXUS_REGISTRY}
                         rm -rf ${DOCKER_CFG}
                     """
                 }
