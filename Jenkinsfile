@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL         = 'nexus:8081'
+        NEXUS_URL         = 'http://localhost:8081'
+        NEXUS_REGISTRY   = 'localhost:8081'
         NEXUS_DOCKER_REPO = 'dockerswarm'
         IMAGE_NAME        = 'task6-app'
         IMAGE_TAG         = "${env.BUILD_NUMBER}"
-        FULL_IMAGE        = "${NEXUS_URL}/repository/${NEXUS_DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
+        FULL_IMAGE        = "${NEXUS_REGISTRY}/repository/${NEXUS_DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}"
         SWARM_STACK       = 'task6'
         NEXUS_CREDS       = 'nexus_credentials'
         SWARM_SSH_CREDS   = 'swarm-manager-ssh'
@@ -37,9 +38,9 @@ pipeline {
                             --build-arg NEXUS_PASS=\$NEXUS_PASS \\
                             -t ${FULL_IMAGE} .
 
-                        echo \$NEXUS_PASS | DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} login ${NEXUS_URL} -u \$NEXUS_USER --password-stdin
+                        echo \$NEXUS_PASS | DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} login ${NEXUS_REGISTRY} -u \$NEXUS_USER --password-stdin
                         DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} push ${FULL_IMAGE}
-                        DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} logout ${NEXUS_URL}
+                        DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} logout ${NEXUS_REGISTRY}
                         rm -rf ${DOCKER_CFG}
                     """
                 }

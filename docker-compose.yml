@@ -4,13 +4,13 @@ version: '3.8'
 
 services:
   app:
-    image: nexus:8081/repository/dockerswarm/task6-app:${IMAGE_TAG}
+    image: localhost:8081/repository/dockerswarm/task6-app:${IMAGE_TAG}
     ports:
       - "9095:8080"
     environment:
       - SWARM_SERVICE_NAME=task6_app
-      - NEXUS_MAVEN_REPO_URL=http://nexus:8081/repository/maven-swarm/
-      - NEXUS_DOCKER_REPO_URL=http://nexus:8081/repository/dockerswarm/
+      - NEXUS_MAVEN_REPO_URL=http://localhost:8081/repository/maven-swarm/
+      - NEXUS_DOCKER_REPO_URL=http://localhost:8081/repository/dockerswarm/
     deploy:
       replicas: 1
       update_config:
