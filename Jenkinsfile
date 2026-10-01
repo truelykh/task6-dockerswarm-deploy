@@ -13,6 +13,7 @@ pipeline {
         SWARM_MANAGER_IP  = 'swarm-manager'
         DOCKER            = '/usr/local/bin/docker'
         DOCKER_CFG        = '/tmp/docker-cfg'
+        DOCKER_BUILDKIT   = '0'
     }
 
     stages {
