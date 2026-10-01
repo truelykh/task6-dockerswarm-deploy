@@ -32,6 +32,7 @@ pipeline {
                         echo '{"auths":{}}' > ${DOCKER_CFG}/config.json
 
                         DOCKER_CONFIG=${DOCKER_CFG} ${DOCKER} build \\
+                            --add-host nexus:host-gateway \\
                             --build-arg NEXUS_USER=\$NEXUS_USER \\
                             --build-arg NEXUS_PASS=\$NEXUS_PASS \\
                             -t ${FULL_IMAGE} .
